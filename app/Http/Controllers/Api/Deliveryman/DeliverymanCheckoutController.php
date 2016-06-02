@@ -1,12 +1,12 @@
 <?php
 
-namespace CodeDelivery\Http\Controllers\Api\Deliveryman;
+namespace App\Http\Controllers\Api\Deliveryman;
 
-use CodeDelivery\Http\Controllers\Controller;
-use CodeDelivery\Http\Requests;
-use CodeDelivery\Repositories\OrderRepository;
-use CodeDelivery\Repositories\UserRepository;
-use CodeDelivery\Services\OrderService;
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Repositories\OrderRepository;
+use App\Repositories\UserRepository;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
