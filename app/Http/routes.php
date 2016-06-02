@@ -79,24 +79,10 @@ Route::group(['prefix'=>'api', 'as'=>'api.', 'middleware'=>'oauth'],function(){
     Route::get('authenticated', 'Auth\AuthController@authenticated');
 
     Route::group(['prefix'=>'client', 'as'=>'client.', 'middleware'=>'oauth.checkrole:client'],function(){
-    Route::get('pedidos', function() {
-        return [
-            'id' => 1,
-            'client' => 'Leonardo',
-            'total'=> 10
-        ];
-    });
-    Route::resource('order','Api\Client\ClientCheckoutController', ['except'=>['create','edit','destroy']]);
+        Route::resource('order','Api\Client\ClientCheckoutController', ['except'=>['create','edit','destroy']]);
     });
 
     Route::group(['prefix'=>'deliveryman', 'as'=>'deliveryman.', 'middleware'=>'oauth.checkrole:deliveryman'],function(){
-        Route::get('pedidos', function() {
-            return [
-                'id' => 1,
-                'client' => 'Leonardo',
-                'total'=> 10
-            ];
-        });
         Route::resource('order','Api\Deliveryman\DeliverymanCheckoutController', ['except'=>['create','edit','destroy','store']]);
         Route::patch('order/{id}/update-status', ['uses'=>'Api\Deliveryman\DeliverymanCheckoutController@updateStatus','as'=>'order.update_status']);
     });

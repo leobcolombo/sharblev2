@@ -1,4 +1,6 @@
-<?php namespace App\Http;
+<?php 
+
+namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -29,6 +31,7 @@ class Kernel extends HttpKernel {
 		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
 		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
 		'auth.checkrole' => 'App\Http\Middleware\CheckRole',
+        'oauth.checkrole' => 'CodeDelivery\Http\Middleware\OAuthCheckRole',
 		'oauth' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware',
 		'oauth-user' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware',
 		'oauth-client' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware',
