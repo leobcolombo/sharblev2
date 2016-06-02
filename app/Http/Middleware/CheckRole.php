@@ -10,21 +10,19 @@ class CheckRole
     /**
      * Handle an incoming request.
      *
-     * @param  IlluminateHttpRequest  $request
-     * @param  Closure  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $role) //aqui adicionamos um parametro para o middleware
+    public function handle($request, Closure $next, $role)
     {
-
-        if(!Auth::check()) {
-            return redirect('/auth/login');
+        if(!Auth::check()){
+           return redirect('/auth/login');
         }
 
-        if(Auth::user()->role <> $role) { //se a role do usuário autenticado bate com a $role que passamos
+        if(Auth::user()->role <> $role){
             return redirect('/auth/login');
         }
-
         return $next($request);
     }
 }
