@@ -61,7 +61,7 @@ Route::group(['prefix'=>'admin', 'as'=>'admin.', 'middleware'=>'auth.checkrole:a
 
 Route::group(['prefix'=>'customer', 'middleware'=>'auth.checkrole:client','as'=>'customer.'], function(){
     Route::group(['prefix'=>'order', 'as'=>'order.'],function(){
-        Route::get('', ['as'=>'index', 'uses'=>'CheckoutController@index']);
+        Route::get('index', ['as'=>'index', 'uses'=>'CheckoutController@index']);
         Route::get('create', ['as'=>'create', 'uses'=>'CheckoutController@create']);
         Route::post('store', ['as'=>'store', 'uses'=>'CheckoutController@store']);
     });
@@ -77,6 +77,9 @@ Route::group(['prefix'=>'api', 'as'=>'api.', 'middleware'=>'oauth'],function(){
     Route::get('authenticated', 'Auth\AuthController@authenticated');
 
     Route::group(['prefix'=>'client', 'as'=>'client.', 'middleware'=>'oauth.checkrole:client'],function(){
+        Route::get('pedidos', function() {
+            return ['id'=>1, 'client'=>'Leonardo', 'total'=>90];
+        });
         Route::resource('order','Api\Client\ClientCheckoutController', ['except'=>['create','edit','destroy']]);
     });
 
