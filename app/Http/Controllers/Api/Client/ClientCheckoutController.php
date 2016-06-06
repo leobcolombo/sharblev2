@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Http\Requests\CheckoutRequest;
 use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
 use App\Repositories\UserRepository;
 use App\Services\OrderService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 class ClientCheckoutController extends Controller
@@ -25,15 +28,19 @@ class ClientCheckoutController extends Controller
      */
     private $orderService;
 
-    private $with = ['client','cupom','items'];
+    private $productRepository;
+
+    //private $with = ['client','cupom','items'];
 
     public function __construct(
         OrderRepository $orderRepository,
         UserRepository $userRepository,
-        OrderService $orderService
+        OrderService $orderService,
+        ProductRepository $productRepository
     )
     {
         $this->orderRepository = $orderRepository;
+        $this->productRepository = $productRepository;
         $this->userRepository = $userRepository;
         $this->orderService = $orderService;
     }
@@ -42,9 +49,7 @@ class ClientCheckoutController extends Controller
     {
         $id = Authorizer::getResourceOwnerId();
         $clientId = $this->userRepository->find($id)->client->id;
-        $orders = $this->orderRepository
-            ->skipPresenter(false)
-            ->with($this->with)->scopeQuery(function ($query) use ($clientId) {
+        $orders = $this->orderRepository->scopeQuery(function ($query) use ($clientId) {
             return $query->where('client_id', '=', $clientId);
         })->paginate();
 
