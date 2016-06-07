@@ -4,29 +4,32 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Eloquent\BaseRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\OrderRepository;
 use App\Models\Order;
 use App\Validators\OrderValidator;
 
-/**
- * Class OrderRepositoryEloquent
- * @package namespace App\Repositories;
- */
 class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
 {
+    protected $skipPresenter = true;
 
+    public function getByIdAndDeliveryman($id, $idDeliveryman)
+    {
+        $result = $this->with(['client', 'items', 'cupom'])->findWhere(['id' => $id, 'user_deliveryman_id' => $idDeliveryman]);
 
-    public function getByIdAndDeliveryman($id, $idDeliveryman) {
-        $result = $this->with(['items','client','cupom'])->findWhere([
-            'id' => $id,
-            'user_deliveryman_id' => $idDeliveryman]);
         if($result instanceof Collection) {
             $result = $result->first();
-            $result->items->each(function($item) {
-            $item->product;
-        });
+        }else{
+            if(isset($result['data']) && count($result['data']) == 1){
+                $result = [
+                    'data' => $result['data'][0]
+                ];
+            }else{
+                throw new ModelNotFoundException("Order não existe");
+            }
         }
+
         return $result;
     }
 
@@ -40,8 +43,6 @@ class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
         return Order::class;
     }
 
-    
-
     /**
      * Boot up the repository, pushing criteria
      */
@@ -49,4 +50,6 @@ class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+
 }

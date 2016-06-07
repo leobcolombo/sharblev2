@@ -60,12 +60,11 @@ class DeliverymanCheckoutController extends Controller
             $idDeliveryman = Authorizer::getResourceOwnerId();
             $order = $this->orderService->updateStatus($id, $idDeliveryman, $request->get('status'));
             if ($order) {
-                return $this->orderRepository->find($order->id);
+                return $order;
+            } else {
+                abort(400, "Pedido não encontrado");
             }
-            abort(400, "Pedido não encontrado");
         }
-
-        abort(400, "Campo status é obrigatório!");
-    }
+}
 
 }

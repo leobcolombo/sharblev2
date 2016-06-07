@@ -1,8 +1,11 @@
 <?php
 namespace App\Services;
+
 use App\Repositories\CupomRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
+use App\Models\Order;
+
 class OrderService
 {
     /**
@@ -67,5 +70,16 @@ class OrderService
             \DB::rollback();
             throw $e;
         }
+    }
+
+    public function updateStatus($id, $idDeliveryman, $status)
+    {
+        $order = $this->orderRepository->getByIdAndDeliveryman($id, $idDeliveryman);
+        if($order instanceof Order){
+            $order->status = $status;
+            $order->save();
+            return $order;
+        }
+        return false;
     }
 }
