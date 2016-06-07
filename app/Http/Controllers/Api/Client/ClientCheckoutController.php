@@ -56,25 +56,25 @@ class ClientCheckoutController extends Controller
         return $orders;
     }
 
-    public function show($id)
+    public function store(Request $request)
     {
-        return $this->orderRepository
-            ->skipPresenter(false)
-            ->with($this->with)->find($id);;
-    }
-
-    public function store(CheckoutRequest $request)
-    {
-        $id = Authorizer::getResourceOwnerId();
         $data = $request->all();
+        $id = Authorizer::getResourceOwnerId();
         $clientId = $this->userRepository->find($id)->client->id;
         $data['client_id'] = $clientId;
-        $order = $this->orderService->create($data);
+        $o = $this->orderService->create($data);
+        $o = $this->orderRepository->with('items')->find($o->id);
 
-        return $this->orderRepository
-            ->skipPresenter(false)
-            ->with($this->with)
-            ->find($order->id);
+        return $o;
+    }
+
+    public function show($id)
+    {
+        $o = $this->orderRepository->with(['items', 'client', 'cupom'])->find($id);
+        $o->items->each(function($item) {
+            $item->product;
+        });
+        return $o;
     }
 
 }
