@@ -5,7 +5,7 @@ use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UserRepository;
 use App\Services\OrderService;
-use Illuminate\Http\Request;
+use App\Http\Requests\CheckoutRequest;
 use Illuminate\Support\Facades\Auth;
 class CheckoutController extends Controller
 {
@@ -50,7 +50,7 @@ class CheckoutController extends Controller
         $products = $this->productRepository->puxa();
         return view('customer.order.create', compact('products'));
     }
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
         $data = $request->all();
         $clientId = $this->userRepository->find(Auth::user()->id)->client->id;

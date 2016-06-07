@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Presenter\ModelFractalPresenter;
 use App\Repositories\OrderRepository;
+use App\Presenters\OrderPresenter;
 use App\Models\Order;
 use App\Validators\OrderValidator;
 
 class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
 {
-    protected $skipPresenter = true;
+    //protected $skipPresenter = true;
 
     public function getByIdAndDeliveryman($id, $idDeliveryman)
     {
@@ -49,6 +51,11 @@ class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function presenter()
+    {
+        return OrderPresenter::class;
     }
 
 

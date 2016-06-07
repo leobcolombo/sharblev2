@@ -56,7 +56,7 @@ class ClientCheckoutController extends Controller
         return $orders;
     }
 
-    public function store(Request $request)
+    public function store(Requests\CheckoutRequest $request)
     {
         $data = $request->all();
         $id = Authorizer::getResourceOwnerId();
@@ -71,9 +71,9 @@ class ClientCheckoutController extends Controller
     public function show($id)
     {
         $o = $this->orderRepository->with(['items', 'client', 'cupom'])->find($id);
-        $o->items->each(function($item) {
+        /*$o->items->each(function($item) {
             $item->product;
-        });
+        });*/
         return $o;
     }
 

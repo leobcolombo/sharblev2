@@ -14,8 +14,15 @@ class Order extends Model implements Transformable
         'client_id',
         'user_deliveryman_id',
         'total',
-        'status'
+        'status',
     ];
+
+    public function transform() {
+        return [
+            'order' => $this->id,
+            'order_items' => $this->items
+        ];
+    }
 
     public function client() {
         return $this->belongsTo(Client::class);

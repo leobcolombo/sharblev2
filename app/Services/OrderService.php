@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Services;
 
+
+use App\Models\Order;
 use App\Repositories\CupomRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
-use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
@@ -20,37 +23,39 @@ class OrderService
      * @var ProductRepository
      */
     private $productRepository;
-    public function __construct(
-        OrderRepository $orderRepository,
-        CupomRepository $cupomRepository,
-        ProductRepository $productRepository
-    )
+
+    public function __construct(OrderRepository $orderRepository, CupomRepository $cupomRepository, ProductRepository $productRepository)
     {
         $this->orderRepository = $orderRepository;
         $this->cupomRepository = $cupomRepository;
         $this->productRepository = $productRepository;
     }
-    public function create(array $data){
-        \DB::beginTransaction();
-        try{
+
+    public function create(array $data)
+    {
+        DB::beginTransaction();
+        try {
             $data['status'] = 0;
-            // Evitar que o usuário envie diretamente um cupom_id
-            if( isset($data['cupom_id']) ){
+
+            if(isset($data['cupom_id'])){
                 unset($data['cupom_id']);
             }
-            if (isset($data['cupom_code'])){
-                $cupom = $this->cupomRepository->findByField('code',$data['cupom_code'])->first();
+
+            if (isset($data['cupom_code'])) {
+                $cupom = $this->cupomRepository->findByField('code', $data['cupom_code'])->first();
                 $data['cupom_id'] = $cupom->id;
                 $cupom->used = 1;
                 $cupom->save();
                 unset($data['cupom_code']);
             }
-            $data['total'] = 0;
+
             $items = $data['items'];
             unset($data['items']);
+
+            $data['total'] = $total = 0;
             $order = $this->orderRepository->create($data);
-            $total = 0;
-            foreach ($items as $item){
+
+            foreach ($items as $item) {
                 $item['price'] = $this->productRepository->find($item['product_id'])->price;
                 $order->items()->create($item);
                 $total += $item['price'] * $item['qtd'];
@@ -60,14 +65,12 @@ class OrderService
             if (isset($cupom)) {
                 $order->total = $total - $cupom->value;
             }
+
             $order->save();
-
-            //dd($order->items);
-
-            \DB::commit();
+            DB::commit();
             return $order;
-        }catch(\Exception $e){
-            \DB::rollback();
+        } catch (\Exception $e) {
+            DB::rollback();
             throw $e;
         }
     }
@@ -82,4 +85,5 @@ class OrderService
         }
         return false;
     }
+
 }
