@@ -12,7 +12,7 @@ use App\Models\Order;
 class OrderTransformer extends TransformerAbstract
 {
 
-    protected $defaultIncludes = ['cupom', 'items'];
+    protected $availableIncludes = ['cupom', 'items'];
 
     /**
      * Transform the \Order entity
@@ -41,6 +41,6 @@ class OrderTransformer extends TransformerAbstract
     }
 
     public function includeItems(Order $model) {
-        return $this->collection($model->items, new OrderItemTransformer);
+        return $this->collection($model->items, new OrderItemTransformer());
     }
 }
