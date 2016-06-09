@@ -14,7 +14,7 @@ use App\Validators\OrderValidator;
 
 class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
 {
-    //protected $skipPresenter = true;
+    protected $skipPresenter = true;
 
     public function getByIdAndDeliveryman($id, $idDeliveryman)
     {

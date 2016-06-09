@@ -25,7 +25,7 @@ class DeliverymanCheckoutController extends Controller
      */
     private $orderService;
 
-    //private $with = ['client', 'cupom', 'items'];
+    private $with = ['client', 'cupom', 'items'];
 
     public function __construct(
         OrderRepository $orderRepository,
@@ -41,7 +41,9 @@ class DeliverymanCheckoutController extends Controller
     public function index()
     {
         $id = Authorizer::getResourceOwnerId();
-        $orders =  $this->orderRepository->with('items')->scopeQuery(function($query) use($id){
+        $orders =  $this->orderRepository
+            ->skipPresenter(false)
+            ->with($this->with)->scopeQuery(function($query) use($id){
             return $query->where('user_deliveryman_id','=', $id);
         })->paginate();
 
@@ -51,7 +53,9 @@ class DeliverymanCheckoutController extends Controller
     public function show($id)
     {
         $idDeliveryman = Authorizer::getResourceOwnerId();
-        return $this->orderRepository->getByIdAndDeliveryman($id, $idDeliveryman);
+        return $this->orderRepository
+            ->skipPresenter(false)
+            ->getByIdAndDeliveryman($id, $idDeliveryman);
     }
 
     public function updateStatus(Request $request, $id)
@@ -60,11 +64,12 @@ class DeliverymanCheckoutController extends Controller
             $idDeliveryman = Authorizer::getResourceOwnerId();
             $order = $this->orderService->updateStatus($id, $idDeliveryman, $request->get('status'));
             if ($order) {
-                return $order;
-            } else {
-                abort(400, "Pedido não encontrado");
+                return $this->orderRepository->find($order->id);
             }
+            abort(400, "Pedido não encontrado");
         }
-}
+
+        abort(400, "Campo status é obrigatório!");
+    }
 
 }
